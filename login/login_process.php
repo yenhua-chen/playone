@@ -26,7 +26,7 @@ if ($user && password_verify($password, $user['password'])) {
     "email" => $user["email"] ?? ""
   ];
 
-  echo "<script>alert('登入成功'); location.href = '/PLAYONE/index.html';</script>";
+  echo "<script>alert('登入成功'); location.href = '../index.html';</script>";
   exit;
 } else {
   echo "<script>alert('帳號或密碼錯誤'); history.back();</script>";

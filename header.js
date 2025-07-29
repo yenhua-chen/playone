@@ -17,12 +17,12 @@
       if (data.loggedIn) {
         userInfo.textContent = `👤 ${data.name}`;
         authLink.textContent = '🚪 登出';
-        authLink.href = '/PLAYONE/header/logout.php';
+        authLink.href = './header/logout.php';
         authLink.onclick = function(e) {
           e.preventDefault();
-          fetch('/PLAYONE/header/logout.php', { credentials: 'include' })
+          fetch('./header/logout.php', { credentials: 'include' })
             .then(() => {
-              location.href = '/PLAYONE/login.html';
+              location.href = '../login.html';
             });
         };
         userInfo.style.display = 'inline-block';
@@ -32,7 +32,7 @@
         // 若是管理員，新增「球場管理」項目（避免重複插入）
         if (data.is_admin === 1 && !dropdown.querySelector('.admin-manage-link')) {
           const manageLi = document.createElement('a');
-          manageLi.href = '/PLAYONE/manage_courts.html';
+          manageLi.href = '../manage_courts.html';
           manageLi.textContent = '✅ 球場管理';
           manageLi.className = 'dropdown-item admin-manage-link';
           dropdown.appendChild(manageLi);
@@ -67,7 +67,7 @@
         // 未登入狀態
         userInfo.textContent = '';
         authLink.textContent = '登入';
-        authLink.href = '/PLAYONE/login.html';
+        authLink.href = '../login.html';
         userInfo.style.display = 'none';
         if (dropdown) dropdown.style.display = 'none';
 
@@ -85,7 +85,7 @@
       const userInfo = document.getElementById('user-info');
       userInfo.textContent = '';
       authLink.textContent = '登入';
-      authLink.href = '/PLAYONE/login.html';
+      authLink.href = '../login.html';
       userInfo.style.display = 'none';
       const dropdown = document.getElementById('user-dropdown-menu');
       if (dropdown) dropdown.style.display = 'none';
