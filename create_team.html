@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8">
+  <title>新增球隊資料</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <style>
+    body {
+      background-color: #f0f8ff;
+      padding-top: 40px;
+    }
+
+    #header-container {
+      margin: 0;
+      padding: 0;
+    }
+
+    .form-container {
+      max-width: 640px;
+      margin: 80px auto 40px;
+      background: white;
+      padding: 30px;
+      border-radius: 16px;
+      box-shadow: 0 0 12px rgba(0,0,0,0.1);
+    }
+  </style>
+</head>
+<body>
+  <div id="header-container"></div>
+
+  <div class="form-container">
+    <h3 class="mb-4">新增球隊資料</h3>
+    <form id="teamForm">
+      <div class="mb-3">
+        <label class="form-label">球隊名稱</label>
+        <input type="text" name="name" class="form-control" required>
+      </div>
+
+      <div class="mb-3">
+        <label class="form-label">聯絡方式</label>
+        <input type="text" name="contact_info" class="form-control">
+      </div>
+
+      <div class="mb-3">
+        <label class="form-label">所屬球場</label>
+        <select name="court_id" id="courtSelect" class="form-select" required>
+          <option value="">載入中...</option>
+        </select>
+      </div>
+
+      <div class="mb-3">
+        <label class="form-label">開團星期</label>
+        <select name="practice_day" class="form-select">
+          <option value="">請選擇</option>
+          <option value="星期一">星期一</option>
+          <option value="星期二">星期二</option>
+          <option value="星期三">星期三</option>
+          <option value="星期四">星期四</option>
+          <option value="星期五">星期五</option>
+          <option value="星期六">星期六</option>
+          <option value="星期日">星期日</option>
+        </select>
+      </div>
+
+      <div class="mb-3">
+        <label class="form-label">開團時間</label>
+        <div class="row g-2">
+          <div class="col-md-6">
+            <input type="time" name="practice_start" class="form-control">
+          </div>
+          <div class="col-md-6">
+            <input type="time" name="practice_end" class="form-control">
+          </div>
+        </div>
+      </div>
+
+      <div class="mb-3">
+        <label class="form-label">隊伍等級區間</label>
+        <div class="row g-2">
+          <div class="col-md-6">
+            <select name="level_min" class="form-select">
+              <option value="">最低等級</option>
+              <option value="新手區">新手</option>
+              <option value="初級">初級</option>
+              <option value="中級">中級</option>
+              <option value="高級">高級</option>
+              <option value="不限">不限</option>
+          
+            </select>
+          </div>
+          <div class="col-md-6">
+            <select name="level_max" class="form-select">
+              <option value="">最高等級</option>
+              <option value="新手區">新手</option>
+              <option value="初級">初級</option>
+              <option value="中級">中級</option>
+              <option value="高級">高級</option>
+              <option value="不限">不限</option>
+        
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <div class="mb-3">
+        <label class="form-label">收費方式</label>
+        <input type="text" name="fee" class="form-control">
+      </div>
+
+      <div class="mb-3">
+        <label class="form-label">備註</label>
+        <textarea name="note" class="form-control" rows="3"></textarea>
+      </div>
+
+      <div class="mb-3">
+        <label class="form-label">球隊資訊</label>
+        <div class="row">
+          <div class="col-md-6">
+            <div class="form-check">
+              <input class="form-check-input" type="checkbox" name="is_friendly" value="1" id="isFriendly">
+              <label class="form-check-label" for="isFriendly">新手友善</label>
+            </div>
+            <div class="form-check">
+              <input class="form-check-input" type="checkbox" name="is_queue_play" value="1" id="isQueuePlay">
+              <label class="form-check-label" for="isQueuePlay">排點上場</label>
+            </div>
+          </div>
+          <div class="col-md-6">
+            <div class="form-check">
+              <input class="form-check-input" type="checkbox" name="is_free_play" value="1" id="isFreePlay">
+              <label class="form-check-label" for="isFreePlay">自由上場</label>
+            </div>
+            <div class="form-check">
+              <input class="form-check-input" type="checkbox" name="is_insert_play" value="1" id="isInsertPlay">
+              <label class="form-check-label" for="isInsertPlay">插拍上場</label>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="d-grid">
+        <button type="submit" class="btn btn-primary">送出</button>
+      </div>
+    </form>
+  </div>
+
+  <script>
+    fetch('Team/get_courts.php')
+      .then(res => res.json())
+      .then(data => {
+        const select = document.getElementById('courtSelect');
+        select.innerHTML = '<option value="">請選擇球場</option>';
+        data.forEach(court => {
+          const option = document.createElement('option');
+          option.value = court.id;
+          option.textContent = court.name;
+          select.appendChild(option);
+        });
+      });
+
+    document.getElementById('teamForm').addEventListener('submit', function(e) {
+      e.preventDefault();
+      const formData = new FormData(this);
+
+      fetch('Team/create_team_process.php', {
+        method: 'POST',
+        body: formData
+      })
+      .then(res => res.json())
+      .then(data => {
+        alert(data.message);
+        if (data.success) {
+          location.href = 'create_team.html';
+        }
+      })
+      .catch(err => {
+        alert('傳送失敗');
+        console.error(err);
+      });
+    });
+
+    fetch('header.html')
+      .then(res => res.text())
+      .then(html => {
+        const container = document.getElementById('header-container');
+        container.innerHTML = html;
+
+        const scripts = container.querySelectorAll("script");
+        scripts.forEach(oldScript => {
+          const newScript = document.createElement("script");
+          if (oldScript.src) {
+            newScript.src = oldScript.src;
+          } else {
+            newScript.textContent = oldScript.textContent;
+          }
+          document.body.appendChild(newScript);
+        });
+
+        const waitForHeader = () => {
+          const header = container.querySelector("header");
+          if (header) {
+            const spacer = document.createElement('div');
+            spacer.style.height = (header.offsetHeight - 40) + 'px';
+            container.parentNode.insertBefore(spacer, container.nextSibling);
+          } else {
+            setTimeout(waitForHeader, 50);
+          }
+        };
+        waitForHeader();
+      });
+  </script>
+</body>
+</html>

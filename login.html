@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8">
+  <title>登入系統</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <style>
+    body {
+      background-color: #f8f9fa;
+      padding-top: 120px;
+      font-family: "Noto Sans TC", sans-serif;
+    }
+    .login-container {
+      max-width: 500px;
+      margin: auto;
+      text-align: center;
+      background-color: #fff;
+      padding: 40px;
+      border-radius: 16px;
+      box-shadow: 0 0 20px rgba(0,0,0,0.05);
+    }
+    .btn-line {
+      background-color: #06c755;
+      color: white;
+      font-size: 18px;
+      padding: 12px 24px;
+      border: none;
+      border-radius: 8px;
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      width: 100%;
+      justify-content: center;
+    }
+    .btn-line:hover {
+      background-color: #05b34f;
+    }
+    .line-icon {
+      width: 24px;
+      height: 24px;
+    }
+    .divider {
+      margin: 30px 0;
+      border-top: 1px solid #ccc;
+      position: relative;
+      text-align: center;
+    }
+    .divider span {
+      background: #fff;
+      padding: 0 12px;
+      position: relative;
+      top: -14px;
+      font-size: 14px;
+      color: #999;
+    }
+    .form-control {
+      font-size: 16px;
+      padding: 10px;
+    }
+    @media (max-width: 768px) {
+      .login-container {
+        max-width: 95vw;
+        padding: 24px;
+      }
+      .btn-line {
+        font-size: 16px;
+        padding: 10px 18px;
+      }
+      .divider {
+        margin: 20px 0;
+      }
+    }
+    @media (max-width: 480px) {
+      body {
+        padding-top: 80px;
+      }
+      .login-container {
+        padding: 12px;
+        border-radius: 8px;
+      }
+      .btn-line {
+        font-size: 15px;
+        padding: 8px 10px;
+      }
+      .divider span {
+        font-size: 12px;
+        padding: 0 6px;
+      }
+      .form-control {
+        font-size: 15px;
+        padding: 8px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div id="header-area"></div>
+
+  <div class="login-container">
+    <h2 class="mb-4">歡迎登入</h2>
+
+    <!-- ✅ 傳統登入表單 -->
+    <form method="POST" action="/playone/login/login_process.php" class="text-start mb-4">
+      <div class="mb-3">
+        <label for="account" class="form-label">帳號</label>
+        <input type="text" class="form-control" id="account" name="account" required>
+      </div>
+      <div class="mb-3">
+        <label for="password" class="form-label">密碼</label>
+        <input type="password" class="form-control" id="password" name="password" required>
+      </div>
+      <button type="submit" class="btn btn-primary w-100">登入</button>
+    </form>
+    <a href="/playone/register.html" class="btn btn-link w-100 mb-3" style="font-size:16px;">註冊新帳號</a>
+
+    <div class="divider"><span>或使用快速登入</span></div>
+
+    <!-- ✅ LINE Login 按鈕（由 JS 動態載入 href） -->
+    <a class="btn btn-line" id="line-login-btn" href="#">
+      <img src="https://upload.wikimedia.org/wikipedia/commons/4/41/LINE_logo.svg" class="line-icon" alt="LINE">
+      使用 LINE 快速登入
+    </a>
+
+    <div class="mt-4 text-start text-secondary small border-top pt-3">
+      <strong>登入後可使用功能：</strong>
+      <ul>
+        <li>建立與管理球隊</li>
+        <li>快速註冊會員</li>
+        <li>串接 LINE 帳號管理功能</li>
+      </ul>
+    </div>
+  </div>
+
+  <script>
+    // 載入 header.html
+    fetch('/playone/header.html')
+      .then(res => res.text())
+      .then(html => {
+        document.getElementById('header-area').innerHTML = html;
+      });
+
+    // 載入 LINE login 連結
+    fetch('/playone/login/get_line_login_url.php')
+      .then(res => res.json())
+      .then(data => {
+        document.getElementById('line-login-btn').href = data.login_url;
+      })
+      .catch(err => {
+        console.error("無法取得 LINE 登入連結", err);
+      });
+  </script>
+</body>
+</html>

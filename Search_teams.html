@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8">
+  <title>搜尋球隊</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <style>
+    body { background-color: #f9f9f9; padding-top: 96px; padding-bottom: 60px; }
+    .container { max-width: 70%; }
+    .team-card {
+      background-color: #fff; border: 1px solid #eee; border-radius: 12px;
+      padding: 24px; margin-bottom: 24px;
+      box-shadow: 0 0 8px rgba(0,0,0,0.02); position: relative;
+      transition: all 0.3s ease;
+    }
+    .team-card:hover { transform: translateY(-5px); box-shadow: 0 8px 16px rgba(0,0,0,0.1); }
+    .tag { display: inline-block; padding: 6px 10px; border-radius: 10px; font-size: 14px; margin-right: 6px; margin-top: 12px; font-weight: 500; }
+    .tag-ac { background-color: #d6f3ff; color: #0077b6; }
+    .tag-water { background-color: #d3f9d8; color: #2d6a4f; }
+    .tag-parking { background-color: #fff3cd; color: #9c6f00; }
+    @media (max-width: 768px) { .container { max-width: 90%; } .team-card { padding: 20px; } }
+    @media (max-width: 480px) { .team-card { padding: 16px; } .tag { font-size: 13px; padding: 4px 8px; } }
+  </style>
+</head>
+<body>
+
+<div id="header-area"></div>
+
+<div class="container">
+  <h2 class="text-center mb-4">搜尋球隊</h2>
+
+  <div class="row mb-4 g-2">
+    <div class="col-md-3">
+      <input id="cityInput" type="text" class="form-control" placeholder="縣市（如：台中市）">
+    </div>
+    <div class="col-md-3">
+      <input id="teamNameInput" type="text" class="form-control" placeholder="球隊名稱">
+    </div>
+    <div class="col-md-2">
+      <select id="dayInput" class="form-select">
+        <option value="">星期</option>
+        <option>星期一</option><option>星期二</option><option>星期三</option>
+        <option>星期四</option><option>星期五</option><option>星期六</option><option>星期日</option>
+      </select>
+    </div>
+    <div class="col-md-2">
+      <select id="levelInput" class="form-select">
+        <option value="">隊伍等級</option>
+        <option>新手</option><option>初級</option><option>中級</option><option>高級</option><option>不限</option><option>新手區</option>
+      </select>
+    </div>
+    <div class="col-md-2 d-grid">
+      <button class="btn btn-primary" onclick="searchTeam()">搜尋</button>
+    </div>
+  </div>
+
+  <div class="row mb-3">
+    <div class="col d-flex gap-3">
+      <div class="form-check">
+        <input class="form-check-input" type="checkbox" id="acCheck">
+        <label class="form-check-label" for="acCheck">冷氣</label>
+      </div>
+      <div class="form-check">
+        <input class="form-check-input" type="checkbox" id="waterCheck">
+        <label class="form-check-label" for="waterCheck">飲水機</label>
+      </div>
+      <div class="form-check">
+        <input class="form-check-input" type="checkbox" id="parkingCheck">
+        <label class="form-check-label" for="parkingCheck">好停車</label>
+      </div>
+      <div class="form-check">
+        <input class="form-check-input" type="checkbox" id="friendlyCheck">
+        <label class="form-check-label" for="friendlyCheck">新手友善</label>
+      </div>
+      <div class="form-check">
+        <input class="form-check-input" type="checkbox" id="freePlayCheck">
+        <label class="form-check-label" for="freePlayCheck">自由上場</label>
+      </div>
+      <div class="form-check">
+        <input class="form-check-input" type="checkbox" id="queuePlayCheck">
+        <label class="form-check-label" for="queuePlayCheck">排點上場</label>
+      </div>
+      <div class="form-check">
+        <input class="form-check-input" type="checkbox" id="insertPlayCheck">
+        <label class="form-check-label" for="insertPlayCheck">插拍上場</label>
+      </div>
+    </div>
+  </div>
+
+  <div id="team-list"></div>
+</div>
+
+<script>
+function searchTeam() {
+  const city = document.getElementById('cityInput').value.trim();
+  const name = document.getElementById('teamNameInput').value.trim();
+  const day = document.getElementById('dayInput').value;
+  const level = document.getElementById('levelInput').value;
+  const has_ac = document.getElementById('acCheck').checked ? 1 : '';
+  const has_water = document.getElementById('waterCheck').checked ? 1 : '';
+  const has_parking = document.getElementById('parkingCheck').checked ? 1 : '';
+  const is_friendly = document.getElementById('friendlyCheck').checked ? 1 : '';
+  const is_free_play = document.getElementById('freePlayCheck').checked ? 1 : '';
+  const is_queue_play = document.getElementById('queuePlayCheck').checked ? 1 : '';
+  const is_insert_play = document.getElementById('insertPlayCheck').checked ? 1 : '';
+
+  const formData = new FormData();
+  formData.append('city', city);
+  formData.append('name', name);
+  formData.append('day', day);
+  formData.append('level', level);
+  formData.append('has_ac', has_ac);
+  formData.append('has_water', has_water);
+  formData.append('has_parking', has_parking);
+  formData.append('is_friendly', is_friendly);
+  formData.append('is_free_play', is_free_play);
+  formData.append('is_queue_play', is_queue_play);
+  formData.append('is_insert_play', is_insert_play);
+
+  fetch('./Team/search_teams_api.php', {
+    method: 'POST',
+    body: formData
+  })
+  .then(res => res.json())
+  .then(data => renderTeams(Array.isArray(data) ? data : []))
+  .catch(err => {
+    console.error('資料錯誤：', err);
+    renderTeams([]);
+  });
+}
+
+function renderTeams(data) {
+  const list = document.getElementById('team-list');
+  list.innerHTML = '';
+
+  if (!Array.isArray(data) || data.length === 0) {
+    list.innerHTML = '<p class="text-center text-muted">查無資料</p>';
+    return;
+  }
+
+  function formatTime(t) {
+    return t?.slice(0, 5) || '';
+  }
+
+  data.forEach(team => {
+    const card = document.createElement('div');
+    card.className = 'team-card';
+
+    const name = document.createElement('h5');
+    let levelText = '';
+    if (team.level_min || team.level_max) {
+      if (team.level_min === team.level_max) {
+        levelText = `（${team.level_min}）`;
+      } else {
+        levelText = `（${team.level_min || ''}～${team.level_max || ''}）`;
+      }
+    }
+    name.textContent = (team.name || '') + levelText;
+    card.appendChild(name);
+
+    const location = document.createElement('p');
+    location.className = 'text-muted mb-1';
+    location.textContent = `地點：${team.city || ''}${team.district || ''}（${team.court_name || '未知球場'}）`;
+    card.appendChild(location);
+
+    const info = document.createElement('p');
+    info.className = 'mb-1';
+    info.textContent = `練習時間：${team.practice_day || ''} ${formatTime(team.practice_start)}~${formatTime(team.practice_end)}`;
+    card.appendChild(info);
+
+    const tagWrapper = document.createElement('div');
+    if (team.has_ac == 1 || team.has_ac === "1") tagWrapper.innerHTML += '<span class="tag tag-ac">冷氣</span>';
+    if (team.has_water == 1 || team.has_water === "1") tagWrapper.innerHTML += '<span class="tag tag-water">飲水機</span>';
+    if (team.has_parking == 1 || team.has_parking === "1") tagWrapper.innerHTML += '<span class="tag tag-parking">好停車</span>';
+    if (team.is_friendly == 1 || team.is_friendly === "1") tagWrapper.innerHTML += '<span class="tag tag-friendly">新手友善</span>';
+    if (team.is_free_play == 1 || team.is_free_play === "1") tagWrapper.innerHTML += '<span class="tag tag-free-play">自由上場</span>';
+    if (team.is_queue_play == 1 || team.is_queue_play === "1") tagWrapper.innerHTML += '<span class="tag tag-queue-play">排點上場</span>';
+    if (team.is_insert_play == 1 || team.is_insert_play === "1") tagWrapper.innerHTML += '<span class="tag tag-insert-play">插拍上場</span>';
+    card.appendChild(tagWrapper);
+
+    list.appendChild(card);
+  });
+}
+
+// 動態載入 header.html 並導入 header.js
+fetch('./header.html')
+  .then(res => res.text())
+  .then(html => {
+    document.getElementById('header-area').innerHTML = html;
+
+    // 載入 header.js
+    const script = document.createElement('script');
+    script.src = './header.js';
+    script.onload = function() {
+      // header.js 載入完後載入所有球隊
+      searchTeam();
+    };
+    document.body.appendChild(script);
+  })
+  .catch(() => {
+    // header 載入失敗也載入所有球隊
+    searchTeam();
+  });
+</script>
+
+</body>
+</html>

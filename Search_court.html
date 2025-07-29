@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8">
+  <title>搜尋球場</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <style>
+body {
+  background-color: #f9f9f9;
+  padding-top: 96px; /* ✅ 調高，讓出 header 空間 */
+  padding-bottom: 60px;
+}
+    .container { max-width: 70%; }
+    .court-card {
+      background-color: #fff; border: 1px solid #eee; border-radius: 12px;
+      padding: 24px; margin-bottom: 24px;
+      box-shadow: 0 0 8px rgba(0,0,0,0.02); position: relative;
+      transition: all 0.3s ease;
+    }
+    .court-card:hover { transform: translateY(-5px); box-shadow: 0 8px 16px rgba(0,0,0,0.1); }
+    .tag { display: inline-block; padding: 6px 10px; border-radius: 10px; font-size: 14px; margin-right: 6px; margin-top: 20px; font-weight: 500; }
+    .tag-ac { background-color: #d6f3ff; color: #0077b6; }
+    .tag-water { background-color: #d3f9d8; color: #2d6a4f; }
+    .tag-parking { background-color: #fff3cd; color: #9c6f00; }
+    .tag-shower { background-color: #f5d0fe; color: #9d0191; }
+    .distance-label { position: absolute; top: 20px; right: 20px; padding: 12px 16px; color: #e74c3c; font-weight: bold; font-size: 18px; }
+    @media (max-width: 768px) { .container { max-width: 90%; } .distance-label { font-size: 16px; padding: 10px 14px; } .court-card { padding: 20px; } }
+    @media (max-width: 480px) { .court-card { padding: 16px; } .distance-label { font-size: 14px; top: 16px; right: 16px; } .tag { font-size: 13px; padding: 4px 8px; } }
+  </style>
+</head>
+<body>
+
+    <div id="header-area"></div>
+
+<div class="container mx-auto" >
+  <h2 class="text-center mb-4">搜尋球場</h2>
+
+  <div class="row mb-4">
+    <div class="col-md-4 mb-2">
+      <input id="cityInput" type="text" class="form-control" placeholder="輸入縣市，如：彰化縣">
+    </div>
+    <div class="col-md-4 mb-2">
+      <input id="districtInput" type="text" class="form-control" placeholder="輸入鄉鎮區，如：大城鄉">
+    </div>
+    <div class="col-md-4 mb-2">
+      <button class="btn btn-primary w-100" onclick="searchCourt()">搜尋</button>
+    </div>
+  </div>
+
+  <div id="court-list"></div>
+</div>
+
+<script>
+function searchCourt() {
+  const city = document.getElementById('cityInput').value.trim();
+  const district = document.getElementById('districtInput').value.trim();
+  let url = './Court/search_courts.php';
+
+  if (city || district) {
+    const params = new URLSearchParams();
+    if (city) params.append('city', city);
+    if (district) params.append('district', district);
+    url += '?' + params.toString();
+  }
+
+  fetch(url)
+    .then(res => res.json())
+    .then(data => renderCourts(data))
+    .catch(err => console.error('資料讀取錯誤：', err));
+}
+
+function renderCourts(data) {
+  const list = document.getElementById('court-list');
+  list.innerHTML = '';
+
+  if (data.length === 0) {
+    list.innerHTML = '<p class="text-center text-muted">查無資料</p>';
+    return;
+  }
+
+  data.forEach(court => {
+    const card = document.createElement('div');
+    card.className = 'court-card';
+
+    const name = document.createElement('h5');
+    name.className = 'mb-3 fw-bold';
+    name.textContent = court.name;
+    card.appendChild(name);
+
+    const address = document.createElement('p');
+    address.className = 'mb-1 text-muted';
+    address.textContent = '地址：' + court.address;
+    card.appendChild(address);
+
+    const tagWrapper = document.createElement('p');
+    tagWrapper.className = 'mb-2';
+
+    if (court.has_ac == 1) tagWrapper.innerHTML += '<span class="tag tag-ac">冷氣</span>';
+    if (court.has_water == 1) tagWrapper.innerHTML += '<span class="tag tag-water">飲水機</span>';
+    if (court.has_parking == 1) tagWrapper.innerHTML += '<span class="tag tag-parking">好停車</span>';
+    if (court.has_shower == 1) tagWrapper.innerHTML += '<span class="tag tag-shower">盥洗</span>';
+
+    card.appendChild(tagWrapper);
+    list.appendChild(card);
+  });
+}
+
+searchCourt(); // 初次載入時顯示全部
+
+// 動態載入 header.html 並導入 header.js
+fetch('./header.html')
+  .then(res => res.text())
+  .then(html => {
+    document.getElementById('header-area').innerHTML = html;
+
+    // 載入 header.js
+    const script = document.createElement('script');
+    script.src = './header.js';
+    document.body.appendChild(script);
+  });
+</script>
+
+</body>
+</html>

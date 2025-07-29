@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8">
+  <title>新增球場</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <style>
+    body {
+      background-color: #f9f9f9;
+    }
+    .form-container {
+      max-width: 650px;
+      margin: 40px auto;
+      background: #fff;
+      padding: 30px;
+      border-radius: 12px;
+      box-shadow: 0 0 12px rgba(0,0,0,0.05);
+    }
+  </style>
+</head>
+<body>
+<div id="header-container"></div>
+
+<div class="container">
+  <div class="form-container">
+    <h3 class="mb-4 text-center">新增球場資訊</h3>
+
+    <form action="./Court/court_process.php" method="POST" enctype="multipart/form-data">
+
+      <!-- 球場名稱 -->
+      <div class="mb-3">
+        <label for="courtName" class="form-label">球場名稱</label>
+        <input type="text" class="form-control" id="courtName" name="name" placeholder="請輸入球場名稱" required>
+      </div>
+
+      <!-- 城市 -->
+      <div class="mb-3">
+        <label for="city" class="form-label">縣市</label>
+        <select class="form-select" id="city" name="city" required>
+          <option value="">請選擇縣市</option>
+          <option value="彰化縣">彰化縣</option>
+
+          <!-- 你可以再加上更多 -->
+        </select>
+      </div>
+
+      <!-- 鄉鎮區 -->
+      <div class="mb-3">
+        <label for="district" class="form-label">鄉鎮區</label>
+        <input type="text" class="form-control" id="district" name="district" placeholder="例如：二林鎮" required>
+      </div>
+
+      <!-- 球場設備 -->
+     <div class="mb-3">
+  <label class="form-label">球場設備</label>
+  <div class="row">
+    <div class="col-6">
+      <div class="form-check">
+        <input class="form-check-input" type="checkbox" id="hasAC" name="has_ac" value="1">
+        <label class="form-check-label" for="hasAC">冷氣</label>
+      </div>
+    </div>
+    <div class="col-6">
+      <div class="form-check">
+        <input class="form-check-input" type="checkbox" id="hasWater" name="has_water" value="1">
+        <label class="form-check-label" for="hasWater">飲水機</label>
+      </div>
+    </div>
+    <div class="col-6">
+      <div class="form-check">
+        <input class="form-check-input" type="checkbox" id="hasParking" name="has_parking" value="1">
+        <label class="form-check-label" for="hasParking">好停車</label>
+      </div>
+    </div>
+    <div class="col-6">
+      <div class="form-check">
+        <input class="form-check-input" type="checkbox" id="hasShower" name="has_shower" value="1">
+        <label class="form-check-label" for="hasShower">盥洗</label>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+      <!-- 詳細地址 -->
+      <div class="mb-3">
+        <label for="courtAddress" class="form-label">詳細地址</label>
+        <input type="text" class="form-control" id="courtAddress" name="address" placeholder="請輸入完整地址" required>
+      </div>
+
+      <!-- 上傳圖片 -->
+      <div class="mb-3">
+        <label for="courtImage" class="form-label">球場圖片（可選）</label>
+        <input type="file" class="form-control" id="courtImage" name="image" accept="image/*">
+      </div>
+
+      <!-- 送出按鈕 -->
+      <div class="text-center">
+        <button type="submit" class="btn btn-primary">送出球場資料</button>
+      </div>
+
+    </form>
+  </div>
+</div>
+
+<script>
+ fetch('header.html')
+  .then(res => res.text())
+  .then(html => {
+    const container = document.getElementById('header-container');
+    container.innerHTML = html;
+
+    // 把 script 抓出來手動執行（處理登入邏輯）
+    const scripts = container.querySelectorAll("script");
+    scripts.forEach(oldScript => {
+      const newScript = document.createElement("script");
+      if (oldScript.src) {
+        newScript.src = oldScript.src;
+      } else {
+        newScript.textContent = oldScript.textContent;
+      }
+      document.body.appendChild(newScript);
+    });
+
+    // 等 header 加入後動態抓高度，插入 spacer
+    const waitForHeader = () => {
+      const header = container.querySelector("header");
+      if (header) {
+        const spacer = document.createElement('div');
+        spacer.style.height = header.offsetHeight + 'px';  // 動態取得高度
+        document.body.insertBefore(spacer, document.querySelector('.container'));
+      } else {
+        setTimeout(waitForHeader, 50);
+      }
+    };
+    waitForHeader();
+  });
+
+</script>
+
+
+</body>
+</html>
