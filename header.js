@@ -18,6 +18,13 @@
         userInfo.textContent = `👤 ${data.name}`;
         authLink.textContent = '🚪 登出';
         authLink.href = '/PLAYONE/header/logout.php';
+        authLink.onclick = function(e) {
+          e.preventDefault();
+          fetch('/PLAYONE/header/logout.php', { credentials: 'include' })
+            .then(() => {
+              location.href = '/PLAYONE/login.html';
+            });
+        };
         userInfo.style.display = 'inline-block';
         userInfo.style.cursor = 'pointer';
         dropdown.style.display = 'none';

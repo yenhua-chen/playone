@@ -118,7 +118,7 @@ function searchTeam() {
   formData.append('is_queue_play', is_queue_play);
   formData.append('is_insert_play', is_insert_play);
 
-  fetch('./Team/search_teams_api.php', {
+  fetch('Team/search_teams_api.php', {
     method: 'POST',
     body: formData
   })
@@ -184,14 +184,14 @@ function renderTeams(data) {
 }
 
 // 動態載入 header.html 並導入 header.js
-fetch('./header.html')
+fetch('header.html')
   .then(res => res.text())
   .then(html => {
     document.getElementById('header-area').innerHTML = html;
 
     // 載入 header.js
     const script = document.createElement('script');
-    script.src = './header.js';
+    script.src = 'header.js';
     script.onload = function() {
       // header.js 載入完後載入所有球隊
       searchTeam();

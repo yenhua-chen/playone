@@ -101,7 +101,7 @@
     <h2 class="mb-4">歡迎登入</h2>
 
     <!-- ✅ 傳統登入表單 -->
-    <form method="POST" action="/playone/login/login_process.php" class="text-start mb-4">
+    <form method="POST" action="login/login_process.php" class="text-start mb-4">
       <div class="mb-3">
         <label for="account" class="form-label">帳號</label>
         <input type="text" class="form-control" id="account" name="account" required>
@@ -112,7 +112,7 @@
       </div>
       <button type="submit" class="btn btn-primary w-100">登入</button>
     </form>
-    <a href="/playone/register.html" class="btn btn-link w-100 mb-3" style="font-size:16px;">註冊新帳號</a>
+    <a href="register.html" class="btn btn-link w-100 mb-3" style="font-size:16px;">註冊新帳號</a>
 
     <div class="divider"><span>或使用快速登入</span></div>
 
@@ -134,14 +134,14 @@
 
   <script>
     // 載入 header.html
-    fetch('/playone/header.html')
+    fetch('header.html')
       .then(res => res.text())
       .then(html => {
         document.getElementById('header-area').innerHTML = html;
       });
 
     // 載入 LINE login 連結
-    fetch('/playone/login/get_line_login_url.php')
+    fetch('login/get_line_login_url.php')
       .then(res => res.json())
       .then(data => {
         document.getElementById('line-login-btn').href = data.login_url;

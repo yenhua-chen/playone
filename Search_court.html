@@ -55,7 +55,7 @@ body {
 function searchCourt() {
   const city = document.getElementById('cityInput').value.trim();
   const district = document.getElementById('districtInput').value.trim();
-  let url = './Court/search_courts.php';
+  let url = 'Court/search_courts.php';
 
   if (city || district) {
     const params = new URLSearchParams();
@@ -109,14 +109,14 @@ function renderCourts(data) {
 searchCourt(); // 初次載入時顯示全部
 
 // 動態載入 header.html 並導入 header.js
-fetch('./header.html')
+fetch('header.html')
   .then(res => res.text())
   .then(html => {
     document.getElementById('header-area').innerHTML = html;
 
     // 載入 header.js
     const script = document.createElement('script');
-    script.src = './header.js';
+    script.src = 'header.js';
     document.body.appendChild(script);
   });
 </script>

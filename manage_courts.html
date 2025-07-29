@@ -60,7 +60,7 @@
   </div>
 
   <script>
-    fetch('/PLAYONE/YH/manage_courts_api.php', {
+    fetch('YH/manage_courts_api.php', {
       credentials: 'include'
     })
     .then(res => res.text())
@@ -70,7 +70,7 @@
 
         if (data.code === 403) {
           alert("🚫 無權限，導回首頁");
-          location.href = "/PLAYONE/index.html";
+          location.href = "index.html";
           return;
         }
 
@@ -115,7 +115,7 @@
         });
 
         function handleAction(courtId, action, btn) {
-          fetch('/PLAYONE/YH/manage_court_action.php', {
+          fetch('YH/manage_court_action.php', {
             method: 'POST',
             headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
             body: `court_id=${courtId}&action=${action}`,
@@ -141,12 +141,12 @@
   </script>
   <script>
     // 動態載入 header.html 並導入 header.js
-    fetch('/PLAYONE/header.html')
+    fetch('header.html')
       .then(res => res.text())
       .then(html => {
         document.getElementById('header-area').innerHTML = html;
         const script = document.createElement('script');
-        script.src = '/PLAYONE/header.js';
+        script.src = 'header.js';
         document.body.appendChild(script);
       });
   </script>
