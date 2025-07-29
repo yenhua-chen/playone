@@ -1,6 +1,6 @@
 <?php
 header('Content-Type: application/json');
-require_once(__DIR__ . '/../db.php');
+require_once('../db.php');
 session_start();
 
 // ✅ 檢查是否登入

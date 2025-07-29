@@ -1,6 +1,6 @@
 <?php
 session_start();
-require_once '../db.php'; // 根據實際路徑引入你的資料庫設定
+require_once('../db.php'); // 根據實際路徑引入你的資料庫設定
 
 $account = $_POST['account'] ?? '';
 $password = $_POST['password'] ?? '';

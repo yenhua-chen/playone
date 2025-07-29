@@ -1,6 +1,6 @@
 <?php
 session_start();
-require_once '../db.php';
+require_once('../db.php');
 
 // === LINE Login 設定 ===
 $client_id = '2007826048';

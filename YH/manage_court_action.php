@@ -1,7 +1,7 @@
 <?php
 session_start();
 header('Content-Type: application/json');
-require_once(__DIR__ . '/../db.php'); // 提供 $pdo
+require_once('../db.php'); // 改成相對路徑
 
 if (!isset($_SESSION['user']) || intval($_SESSION['user']['is_admin']) !== 1) {
   http_response_code(403);

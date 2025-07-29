@@ -1,6 +1,6 @@
 <?php
 session_start();
-require_once __DIR__ . '/../db.php';
+require_once('../db.php');
 
 // 取得表單資料
 $name = $_POST['name'] ?? '';
